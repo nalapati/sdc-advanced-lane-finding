@@ -14,7 +14,7 @@ Undistortion is done in Cell 22 in the notebook, Applying the undistortion on an
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/straight_lines1_undistort.jpg)
 
 ## Use color transforms, gradients, etc., to create a thresholded binary image.
-Thresholding is done in Cell 31 in the notebook, after tuning and experimentation the binary image is a combination of a thresholded image after applying sobel edge detection along the X direction with a kernel size of 7 and the red channel and using a thresolded saturation channel (converting BGR to HLS) and using a threshold of (90, 255)
+Thresholding is done in Cell 31 in the notebook, after tuning and experimentation the binary image is a combination of a thresholded image after applying sobel edge detection along the X direction with a kernel size of 7 and the red channel and using a thresolded saturation channel (converting BGR to HLS) and using a threshold of (90, 255).
 
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/thresholded_images.jpg)
 
@@ -24,7 +24,7 @@ Perspective transform is done in Cell 24 in the notebook, the idea is to select 
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/unwarped.jpg)
 
 ## Detect lane pixels and fit to find the lane boundary.
-Lane line detection is done in Cell 25 in the notebook, here for every image independent of any other image I take a histogram of the lower half of the image to find peaks that represent the road lanes. (This is done for simplicity, an optimization is to use lane coordinates from previous frames in a stream). I expect to find two peaks in the histogram, one corresponding to each left and right road lane.
+Lane line detection is done in Cell 25 in the notebook, here for every image independent of any other image I take a histogram of the lower half of the image to find peaks that represent the road lanes. (This is done for simplicity, an optimization is to use lane coordinates from previous frames in a stream). I expect to find two peaks in the histogram, one corresponding to each left and right road lane. Assuming the peak coordinates are (x,y) above, I run a sliding window along (x,y) from bottom of the image to the top of the image. In the window area I calculate the mean x coordinate of nonzero pixels to recenter the sliding window as it is moved from the bottom to the top of the image. All nonzero points aid in fitting a 2nd order polynomial (``np.polyfit``) along the left and the right lanes respectively.
 ```
 #
 #  x1,y1         x2
@@ -34,13 +34,16 @@ Lane line detection is done in Cell 25 in the notebook, here for every image ind
 #   y2
 #    |     w     |
 ```
-Assuming the peak coordinates are (x,y) above, I run a sliding window along (x,y) from bottom of the image to the top of the image. In the window area I calculate the mean x coordinate of nonzero pixels to recenter the sliding window as it is moved from the bottom to the top of the image. All nonzero points aid in fitting a 2nd order polynomial (``np.polyfit``) along the left and the right lanes respectively.
 
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/binary_image.jpg)
 
 ## Determine the curvature of the lane and vehicle position with respect to center. Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-Radius of curvature and offset from center and rendering the lane overlay are in Cells 9, 10, 26.
+Radius of curvature and offset from center and rendering the lane overlay are in Cells 9, 10, 26. The radius of curvature is calculated at y=719 using the formula below. The coefficients A, B are derived for each of the lane lines and reported separately corresponding to each lane line. The offset is computed as the average of the difference between the lowermost x coordinates of the left and right lane lines and where they are really supposed to be from the calibration image.
+```
+Radius of curvature = ((1 + (2Ay+B)**2)**1.5) / |2*A|.
+Offset = ((left_fitx - 320) * xm_per_pix + (right_fitx - 960) * xm_per_pix) / 2
+```
 
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/lane_overlay.jpg)
 

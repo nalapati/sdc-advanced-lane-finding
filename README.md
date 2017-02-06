@@ -16,7 +16,7 @@ Undistortion is done in Cell 22 in the notebook, Applying the undistortion on an
 * Use color transforms, gradients, etc., to create a thresholded binary image.
 Thresholding is done in Cell 31 in the notebook, after tuning and experimentation the binary image is a combination of a thresholded image after applying sobel edge detection along the X direction with a kernel size of 7 and the red channel and using a thresolded saturation channel (converting BGR to HLS) and using a threshold of (90, 255)
 
-![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/thresholded_image.jpg)
+![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/thresholded_images.jpg)
 
 * Apply a perspective transform to rectify binary image ("birds-eye view").
 Perspective transform is done in Cell 24 in the notebook, the idea is to select 4 points in the image representing the region of interest that resemble a trapezium with the slant edges in line with the road lanes(need a calibration image with straight lines and the car dead center in the lane), and map them to 4 points in a birds eye view image. The transformation matrix and inverse transformation matrix are obtained using the ``cv2.getPerspectiveTransform`` method. The idea is to map every point in the source image to the destination image reducing the z distance of faraway lane points so they all appear to be at an equal distance from the camera giving the perception of a birds eye view.

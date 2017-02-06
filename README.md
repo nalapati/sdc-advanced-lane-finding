@@ -39,10 +39,10 @@ Lane line detection is done in Cell 25 in the notebook, here for every image ind
 
 ## Determine the curvature of the lane and vehicle position with respect to center. Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-Radius of curvature and offset from center and rendering the lane overlay are in Cells 9, 10, 26. The radius of curvature is calculated at y=719 using the formula below. The coefficients A, B are derived for each of the lane lines and reported separately corresponding to each lane line. The offset is computed as the average of the difference between the lowermost x coordinates of the left and right lane lines and where they are really supposed to be from the calibration image.
+Radius of curvature and offset from center and rendering the lane overlay are in Cells 9, 10, 26. The radius of curvature is calculated at y=719 using the formula below. The coefficients A, B are derived for each of the lane lines and reported separately corresponding to each lane line. The offset is computed as the average of the difference between the lowermost x coordinates of the left and right lane lines and where they are really supposed to be from the calibration image. Both computations are mapped to meters by approximating the distance represented by each pixel in the image.
 ```
 Radius of curvature = ((1 + (2Ay+B)**2)**1.5) / |2*A|.
-Offset = ((left_fitx - 320) * xm_per_pix + (right_fitx - 960) * xm_per_pix) / 2
+Offset = ((left_lane_x - 320) + (right_lane_x - 960)) / 2
 ```
 
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/lane_overlay.jpg)

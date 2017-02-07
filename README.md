@@ -52,11 +52,12 @@ Code for the pipeline is in Cells 27, 28. The idea here is to run the stateless 
 
 ## Discussion
 ### Problems
-* Picking thresholds to generate a binary image is a really hard problem, where the current implementation will fail under varied lighting conditions
+* Picking thresholds to generate a binary image is a really hard problem, where the current implementation will fail under varied lighting conditions, essentially lanes could go undetected or we could over detect edges on the road.
 * A lot of noise or spurious edges in the image could cause problems while detecting lane lines, this could throw the histogram technique of detecting lane lines off track.
 * The smoothing/skipping approach might not react well to fast changes in lane directions.
 * Binarization is problematic in that varying brightness around a lane line could create non-rectangular shapes like semi circles in the place of lane markings, in which case a polynomial fit could result in strange curvature values.
+
 ### Improvements
-* We need more semantics/better latents around understanding a lane line in an image. Needs more parameters, one idea is to train a Convolutional neural network to predict steering angles under a wide range of lighting conditions. Use the convolution filters from the first layer of the convolutional neural network as masks on the input image(basically convolve the filter from the CNN on the input image). Regions containing lane markings will show up leading to better thresholding/binarization. Note since the filters were learned while predicting steering angles, the filter parameters will be sensitive to "lane markings".
+* We need more semantics/better latents around understanding a lane line in an image. Needs more parameters, one idea is to train a Convolutional neural network to predict steering angles under a wide range of lighting conditions. Use the convolution filters from the first layer of the convolutional neural network as masks on the input image(basically convolve the filter from the CNN on the input image). Regions containing lane markings will show up leading to better thresholding/binarization. Note since the filters were learned while predicting steering angles, the filter parameters will be sensitive to "lane markings", filtering out backgrounds and other noise. For example:
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/convolution2d_2.png)
 * Accounting for lightness or running sobel edge detection on light colors, while thresholding so as to ignore dark edges.

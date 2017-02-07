@@ -14,7 +14,7 @@ Undistortion is done in Cell 22 in the notebook, Applying the undistortion on an
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/straight_lines1_undistort.jpg)
 
 ## Use color transforms, gradients, etc., to create a thresholded binary image.
-Thresholding is done in Cell 31 in the notebook, after tuning and experimentation the binary image is a combination of a thresholded image after applying sobel edge detection along the X direction with a kernel size of 7 and the red channel and using a thresolded saturation channel (converting BGR to HLS) and using a threshold of (90, 255).
+Thresholding is done in Cell 31 in the notebook, after tuning and experimentation the binary image is a combination of a thresholded image after applying sobel edge detection along the X direction with a kernel size of 7 and the red channel and using a thresolded saturation channel (converting BGR to HLS) and using a threshold of (90, 255). A trick here is to also threshold the L(lightness) channel so as to ignore dark sections, this worked really well with shadow regions.
 
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/thresholded_images.jpg)
 
@@ -50,12 +50,16 @@ Offset = ((left_lane_x - 320) + (right_lane_x - 960)) / 2
 ## Pipeline
 Code for the pipeline is in Cells 27, 28. The idea here is to run the stateless lane detection in Cell 25 to get a left and right lane line. Two key enhancements here are smoothing and skipping. In the smoothing step, the lane for the current frame is derived from the curve coefficients of the last 10 frames. In the skipping step, I check to see if the x coordinates of the left and right lanes are a fixed distance apart from each other (relatively fixed width), if not, just use the previous frame's lane lines. ``project_video_output.mp4``
 
+[![Poject Video Output](https://img.youtube.com/vi/BC3zekFsyYU/0.jpg)](https://www.youtube.com/watch?v=BC3zekFsyYU)
+
 ## Discussion
 ### Problems
-* Picking thresholds to generate a binary image is a really hard problem, where the current implementation will fail under varied lighting conditions, essentially lanes could go undetected or we could over detect edges on the road.
-* A lot of noise or spurious edges in the image could cause problems while detecting lane lines, this could throw the histogram technique of detecting lane lines off track.
-* The smoothing/skipping approach might not react well to fast changes in lane directions.
-* Binarization is problematic in that varying brightness around a lane line could create non-rectangular shapes like semi circles in the place of lane markings, in which case a polynomial fit could result in strange curvature values.
+* Picking thresholds and the right combination of edge detection and color thresholding to generate a binary image was a really hard problem, where the current implementation will fail under varied lighting conditions, essentially lanes could go undetected or we could over detect edges on the road.
+* A lot of noise or spurious edges in the image could causes problems while detecting lane lines, this could throw the histogram technique of detecting lane lines off track.
+* The smoothing/skipping approach will not react well to fast changes in lane directions.
+* Binarization is problematic in varying brightness around a lane marker could create non-rectangular shapes like semi circles in the place of lane markings, in which case a polynomial fit could result in strange curvature values.
+* Lack of smoothing/skipping techniques caused the lane detection pipeline to go haywire for a few sections of the lane, sanity checking that the detected lines are parallel in the current frame helps a lot to generate a smooth output.
+* Shadows on the road caused problems in some versions of thresholding, but adding a threshold on the L channel in a HLS image makes it so we reject dark sections of the road.
 
 ### Improvements
 * We need more semantics/better latents around understanding a lane line in an image. Needs more parameters, one idea is to train a Convolutional neural network to predict steering angles under a wide range of lighting conditions. Use the convolution filters from the first layer of the convolutional neural network as masks on the input image(basically convolve the filter from the CNN on the input image). Regions containing lane markings will show up leading to better thresholding/binarization. Note since the filters were learned while predicting steering angles, the filter parameters will be sensitive to "lane markings", filtering out backgrounds and other noise. For example:

@@ -48,7 +48,7 @@ Offset = ((left_lane_x - 320) + (right_lane_x - 960)) / 2
 ![alt tag](https://raw.githubusercontent.com/nalapati/sdc-advanced-lane-finding/master/lane_overlay.jpg)
 
 ## Pipeline
-Code for the pipeline is in Cells 27, 28. The idea here is to run the stateless lane detection in Cell 25 to get a left and right lane line. Two key enhancements here are smoothing and skipping. In the smoothing step, the lane for the current frame is derived from the curve coefficients of the last 10 frames. In the skipping step, I check to see if the x coordinates of the left and right lanes are a fixed distance apart from each other (relatively fixed width), if not, just use the previous frame's lane lines. ``project_video_output.mp4``
+Code for the pipeline is in Cells 27, 28. The idea here is to run the stateless lane detection in Cell 25 to get a left and right lane line. Two key enhancements here are smoothing and skipping. In the smoothing step, the lane for the current frame is derived from the curve coefficients of the last 10 frames. In the skipping step, I check to see if the x coordinates of the left and right lanes are a fixed distance apart from each other (relatively fixed width), if not, just use the previous frame's lane lines. ``project_video_output.mp4``. Click on the image below for the youtube video containing the output.
 
 [![Poject Video Output](https://img.youtube.com/vi/BC3zekFsyYU/0.jpg)](https://www.youtube.com/watch?v=BC3zekFsyYU)
 
